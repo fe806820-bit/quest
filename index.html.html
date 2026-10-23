@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>جامعة السويس - الرحلة المعرفية الهندسية</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap">
+    <style>
+        * { box-sizing: border-box; font-family: "Tajawal", system-ui, -apple-system, sans-serif; }
+        html { color-scheme: light; scroll-padding-top: env(safe-area-inset-top, 0px); }
+        body { padding-top: env(safe-area-inset-top, 0px); margin: 0; background: #f8fafc; color: #0f172a; padding-bottom: 80px; }
+        .timer-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 1000; background: #0f172a; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #10b981; }
+        .timer-badge { background: #e11d48; color: #fff; font-size: 16px; font-weight: bold; padding: 4px 12px; border-radius: 16px; font-family: monospace; }
+        .hero { background: linear-gradient(135deg, #064e3b, #0f172a); color: #fff; padding: 24px 16px; text-align: center; }
+        .hero-badge { display: inline-block; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 6px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .hero h1 { margin: 0; font-size: 22px; }
+        .hero p { margin: 6px 0 0; font-size: 13px; color: #cbd5e1; }
+        .container { max-width: 650px; margin: 16px auto; padding: 0 14px; }
+        .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.04); }
+        .card-header { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
+        .card-num { width: 28px; height: 28px; background: #ecfdf5; color: #047857; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
+        .card-title { font-size: 15px; font-weight: bold; color: #047857; margin: 0; }
+        .form-control { width: 100%; padding: 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #fff; margin-bottom: 12px; }
+        .progress-box { background: #f1f5f9; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+        .progress-txt { font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+        .progress-bg { width: 100%; height: 8px; background: #cbd5e1; border-radius: 4px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: #047857; transition: width 0.2s; }
+        .chk-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; background: #f8fafc; border-radius: 6px; margin-bottom: 6px; font-size: 13.5px; border: 1px solid #f1f5f9; cursor: pointer; }
+        .chk-item input { width: 18px; height: 18px; accent-color: #047857; cursor: pointer; }
+        .res-card { display: block; background: #fff; border: 1.5px solid #e2e8f0; border-right: 4px solid #047857; padding: 12px 14px; border-radius: 8px; text-decoration: none; color: inherit; margin-bottom: 10px; }
+        .res-badge { background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+        .res-title { font-weight: bold; font-size: 14px; color: #0f172a; margin-bottom: 3px; }
+        .res-desc { font-size: 12px; color: #64748b; margin: 0; line-height: 1.4; }
+        .q-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+        .q-text { font-weight: bold; font-size: 13.5px; margin-bottom: 8px; line-height: 1.4; }
+        .opt-row { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #cbd5e1; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 13px; cursor: pointer; }
+        .opt-row input { accent-color: #047857; }
+        .btn-submit { width: 100%; background: linear-gradient(135deg, #059669, #047857); color: #fff; border: none; padding: 13px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        #cert-container { display: none; border: 4px double #047857; padding: 24px 16px; background: #fff; border-radius: 12px; text-align: center; margin-top: 20px; }
+        .btn-print { width: 100%; background: #0f172a; color: #fff; border: none; padding: 11px; font-weight: bold; border-radius: 6px; margin-top: 14px; cursor: pointer; }
+        .quiz-card { display: none; }
+        body.exam .quiz-card { display: block; }
+        body:not(.started) #view-civil, body:not(.started) #view-prod, body:not(.started) #view-hvac { display: none !important; }
+        body.started .start-card { display: none; }
+        .start-card { text-align: center; }
+        .start-card p { font-size: 13px; color: #475569; margin: 0 0 8px; line-height: 1.6; }
+        .timer-badge.low { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.35; } }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+        @media print {
+            body * { visibility: hidden; }
+            #cert-container, #cert-container * { visibility: visible; }
+            #cert-container { position: absolute; left: 0; top: 0; width: 100%; display: block !important; border: 2px solid #000; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="initApp()">
+    <div class="timer-bar">
+        <span id="timer-label" style="font-size: 13px; font-weight: bold;">📖 وقت القراءة:</span>
+        <span class="timer-badge" id="timer-val">10:00</span>
+    </div>
+    <div class="hero">
+        <span class="hero-badge">جامعة السويس</span>
+        <h1>كلية التكنولوجيا والتعليم</h1>
+        <p>المنظومة التفاعلية للرحلات المعرفية الهندسية (WebQuest)</p>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><div class="card-num">★</div><h3 class="card-title">بيانات الطالب والتخصص الهندسي</h3></div>
+            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">اسم الطالب ثلاثي / رئيس المجموعة:</label>
+            <input type="text" id="user-name" class="form-control" placeholder="اكتب اسمك كاملاً هنا...">
+            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">الرقم الجامعي / رقم الجلوس:</label>
+            <input type="text" id="user-id" class="form-control" inputmode="numeric" placeholder="اكتب رقمك الجامعي...">
+            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">القسم التخصصي بالكلية:</label>
+            <select id="user-dept" class="form-control" onchange="switchDept(this.value)">
+                <option value="civil">قسم تكنولوجيا الإنشاءات المدنية والمعمارية</option>
+                <option value="prod">قسم تكنولوجيا ميكانيكا الإنتاج</option>
+                <option value="hvac">قسم تكنولوجيا التبريد وتكييف الهواء</option>
+            </select>
+        </div>
+
+        <div id="view-civil" style="display: block;">
+            <div class="card">
+                <div class="card-header"><div class="card-num">١</div><h3 class="card-title">المقدمة الهندسية (الإنشاءات المدنية)</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">تخيلوا أنكم فريق استشاري مسؤول عن اختيار وتصميم الخلطات الخرسانية المناسبة لمنشأة صناعية ساحلية في السويس لمقاومة الأملاح والتحميل العالي.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٢</div><h3 class="card-title">المهمة الاستشارية المطلوبة</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">دراسة المراجع، وتحديد نوع الإسمنت والركام والإضافات الخاصة لمنع تسرب المياه ومقاومة الكبريتات، واجتياز الاختبار التقويمي.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٣</div><h3 class="card-title">العمليات ومتابعة الإنجاز</h3></div>
+                <div class="progress-box">
+                    <div class="progress-txt" id="txt-civil">أكملت 0% من المهام</div>
+                    <div class="progress-bg"><div class="progress-fill" id="bar-civil"></div></div>
+                </div>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('civil')"> <span>مراجعة اشتراطات كود الخرسانة وبيئة التشغيل</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('civil')"> <span>فحص المراجع الهندسية الأربعة بالأسفل</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('civil')"> <span>المقارنة الفنية بين بدائل الخلطات والمضافات</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('civil')"> <span>حل الأسئلة التخصصية الخمسة واعتماد النتيجة</span></label>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٤</div><h3 class="card-title">المصادر والمراجع المعتمدة (4 مصادر)</h3></div>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AE%D8%B1%D8%B3%D8%A7%D9%86%D8%A9" target="_blank" class="res-card">
+                    <span class="res-badge">مرجع معتمد</span>
+                    <div class="res-title">موسوعة تكنولوجيا الخرسانة ومواد البناء</div>
+                    <p class="res-desc">مكونات الخرسانة، مراحل الشك، وضبط القوام الموقعي.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AE%D8%B1%D8%B3%D8%A7%D9%86%D8%A9_%D9%85%D8%B3%D8%A8%D9%82%D8%A9_%D8%A7%D9%84%D8%A5%D8%AC%D9%87%D8%A7%D8%AF" target="_blank" class="res-card">
+                    <span class="res-badge">بحث تطبيقي</span>
+                    <div class="res-title">الخرسانة الخاصة ومسبقة الإجهاد</div>
+                    <p class="res-desc">تطبيقات المنشآت ذات الأحمال العالية ومقاومة البيئات البحرية.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%A5%D8%B3%D9%85%D9%86%D8%AA" target="_blank" class="res-card">
+                    <span class="res-badge">دليل علمي</span>
+                    <div class="res-title">أنواع الإسمنت وتطبيقاته الهندسية</div>
+                    <p class="res-desc">الإسمنت المقاوم للكبريتات والأنواع المناسبة للتربة المالحة.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AE%D8%B1%D8%B3%D8%A7%D9%86%D8%A9_%D9%85%D8%B3%D9%84%D8%AD%D8%A9" target="_blank" class="res-card">
+                    <span class="res-badge">كود إرشادي</span>
+                    <div class="res-title">تصميم العناصر الخرسانية وحماية حديد التسليح</div>
+                    <p class="res-desc">اشتراطات زيادة الغطاء الخرساني لمقاومة الصدأ والبيئة الساحلية.</p>
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٥</div><h3 class="card-title">التقويم التخصصي (قسم الإنشاءات - 100 درجة)</h3></div>
+                <div class="q-item">
+                    <div class="q-text">س1: ما هو الاختبار الموقعي الأساسي للتأكد من قابلية تشغيل وقوام الخرسانة الطازجة؟</div>
+                    <label class="opt-row"><input type="radio" name="cq1" value="1"> اختبار الهبوط (Slump Test)</label>
+                    <label class="opt-row"><input type="radio" name="cq1" value="0"> اختبار الشد المباشر</label>
+                    <label class="opt-row"><input type="radio" name="cq1" value="0"> اختبار الموجات فوق الصوتية</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س2: أي أنواع الإسمنت يوصى به للأساسات المعرضة لمياه وتربة خليج السويس الغنية بالأملاح؟</div>
+                    <label class="opt-row"><input type="radio" name="cq2" value="1"> إسمنت مقاوم للكبريتات (SRC)</label>
+                    <label class="opt-row"><input type="radio" name="cq2" value="0"> إسمنت بورتلاندي عادي (OPC)</label>
+                    <label class="opt-row"><input type="radio" name="cq2" value="0"> إسمنت سريع التصلد</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س3: تُجرى اختبارات تكسير المكعبات الخرسانية قياسياً بعد مرور كم يوماً لتحديد رتبة الخرسانة؟</div>
+                    <label class="opt-row"><input type="radio" name="cq3" value="1"> 28 يوماً</label>
+                    <label class="opt-row"><input type="radio" name="cq3" value="0"> 7 أيام فقط</label>
+                    <label class="opt-row"><input type="radio" name="cq3" value="0"> 60 يوماً</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س4: وظيفة إضافة الملدنات الفائقة (Superplasticizers) إلى الخلطة الخرسانية هي:</div>
+                    <label class="opt-row"><input type="radio" name="cq4" value="1"> تقليل ماء الخلط مع الحفاظ على قابلية التشغيل</label>
+                    <label class="opt-row"><input type="radio" name="cq4" value="0"> زيادة زمن الشك الابتدائي لأيام</label>
+                    <label class="opt-row"><input type="radio" name="cq4" value="0"> تقليل الوزن النوعي للخرسانة</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س5: الغطاء الخرساني لحديد التسليح في المنشآت الساحلية يتم زيادته بهدف:</div>
+                    <label class="opt-row"><input type="radio" name="cq5" value="1"> حماية حديد التسليح من الصدأ والتآكل</label>
+                    <label class="opt-row"><input type="radio" name="cq5" value="0"> زيادة المظهر الجمالي فقط</label>
+                    <label class="opt-row"><input type="radio" name="cq5" value="0"> تقليل استهلاك الركام</label>
+                </div>
+                <button type="button" class="btn-submit" onclick="submitExam('civil')">اعتماد الإجابات واستخراج الشهادة</button>
+            </div>
+        </div>
+
+        <div id="view-prod" style="display: none;">
+            <div class="card">
+                <div class="card-header"><div class="card-num">١</div><h3 class="card-title">المقدمة الهندسية (ميكانيكا الإنتاج)</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">بصفتكم مهندسي إنتاج وتصنيع، مطلوب إعداد بطاقة عمليات لتشغيل وتصنيع تروس نقل حركة وقطع ميكانيكية دقيقة تخضع لإجهادات احتكاك وتآكل عالية.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٢</div><h3 class="card-title">المهمة الاستشارية المطلوبة</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">مقارنة طرق التشغيل بماكينات CNC، وتحديد المعالجة الحرارية المناسبة لرفع الصلادة ومقاومة التآكل، واجتياز الاختبار.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٣</div><h3 class="card-title">العمليات ومتابعة الإنجاز</h3></div>
+                <div class="progress-box">
+                    <div class="progress-txt" id="txt-prod">أكملت 0% من المهام</div>
+                    <div class="progress-bg"><div class="progress-fill" id="bar-prod"></div></div>
+                </div>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('prod')"> <span>دراسة الرسم الهندسي وتحديد خامة التروس</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('prod')"> <span>مراجعة مصادر التشغيل والمعالجة الحرارية</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('prod')"> <span>ضبط سرعات القطع والتغذية وأدوات القياس</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('prod')"> <span>حل الأسئلة التخصصية الخمسة واعتماد النتيجة</span></label>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٤</div><h3 class="card-title">المصادر والمراجع المعتمدة (4 مصادر)</h3></div>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AA%D8%B4%D8%BA%D9%8A%D9%84_(%D9%85%D9%8A%D9%83%D8%A7%D9%86%D9%8A%D9%83%D8%A7)" target="_blank" class="res-card">
+                    <span class="res-badge">مرجع هندسي</span>
+                    <div class="res-title">أسس التشغيل وماكينات القطع والورش</div>
+                    <p class="res-desc">عمليات الخراطة، التفريز، وتحديد سرعات القطع وأدوات الورش.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D9%85%D8%B9%D8%A7%D9%84%D8%AC%D8%A9_%D8%AD%D8%B1%D8%A7%D8%B1%D9%8A%D8%A9" target="_blank" class="res-card">
+                    <span class="res-badge">بحث تطبيقي</span>
+                    <div class="res-title">المعالجات الحرارية للصلب والسبائك</div>
+                    <p class="res-desc">عمليات التقسية والمعادلة لتحسين الصلادة ومقاومة التآكل.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AA%D8%AD%D9%83%D9%85_%D8%B1%D9%82%D9%85%D9%8A_%D8%A8%D8%A7%D9%84%D8%AD%D8%A7%D8%B3%D9%88%D8%A8" target="_blank" class="res-card">
+                    <span class="res-badge">دليل تقني</span>
+                    <div class="res-title">برمجة ماكينات التحكم الرقمي CNC</div>
+                    <p class="res-desc">أكواد G-Code و M-Code ومحاور الحركة ودقة التشغيل الآلي.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D9%82%D8%AF%D9%85%D8%A9_%D8%B0%D8%A7%D8%AA_%D9%88%D8%B1%D9%86%D9%8A%D8%A9" target="_blank" class="res-card">
+                    <span class="res-badge">أجهزة قياس</span>
+                    <div class="res-title">أدوات القياس والمعايرة وضبط الجودة</div>
+                    <p class="res-desc">استخدام القدمة ذات الورنية والميكرومتر لقياس الأبعاد بدقة ميكرونية.</p>
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٥</div><h3 class="card-title">التقويم التخصصي (ميكانيكا الإنتاج - 100 درجة)</h3></div>
+                <div class="q-item">
+                    <div class="q-text">س1: أي عملية معالجة حرارية تهدف لزيادة صلادة السطح مع الحفاظ على قلب المعدن مرناً؟</div>
+                    <label class="opt-row"><input type="radio" name="pq1" value="1"> الكربنة السطحية (Case Hardening)</label>
+                    <label class="opt-row"><input type="radio" name="pq1" value="0"> التلدين الكامل (Annealing)</label>
+                    <label class="opt-row"><input type="radio" name="pq1" value="0"> التخمير العادي</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س2: كود الـ G-Code المستخدم في برمجة الـ CNC للحركة السريعة بدون قطع هو:</div>
+                    <label class="opt-row"><input type="radio" name="pq2" value="1"> G00</label>
+                    <label class="opt-row"><input type="radio" name="pq2" value="0"> G01</label>
+                    <label class="opt-row"><input type="radio" name="pq2" value="0"> G02</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س3: وظيفة استخدام سوائل التبريد أثناء عمليات التشغيل هي:</div>
+                    <label class="opt-row"><input type="radio" name="pq3" value="1"> تقليل الاحتكاك وتبريد أداة القطع لمنع تآكلها</label>
+                    <label class="opt-row"><input type="radio" name="pq3" value="0"> زيادة وزن المشغولة</label>
+                    <label class="opt-row"><input type="radio" name="pq3" value="0"> تغيير التركيب الكيميائي للمعدن</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س4: الجهاز الأساسي المستخدم لقياس دقة الأبعاد حتى أجزاء من المليمتر في ورش الإنتاج هو:</div>
+                    <label class="opt-row"><input type="radio" name="pq4" value="1"> القدمة ذات الورنية والميكرومتر</label>
+                    <label class="opt-row"><input type="radio" name="pq4" value="0"> شريط القياس المتري</label>
+                    <label class="opt-row"><input type="radio" name="pq4" value="0"> ميزان القامة</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س5: عملية إزالة الرايش الدقيق وتحسين المظهر السطحي النهائي للمحاور تسمى:</div>
+                    <label class="opt-row"><input type="radio" name="pq5" value="1"> التجليخ (Grinding)</label>
+                    <label class="opt-row"><input type="radio" name="pq5" value="0"> الحدادة</label>
+                    <label class="opt-row"><input type="radio" name="pq5" value="0"> السباكة الرملية</label>
+                </div>
+                <button type="button" class="btn-submit" onclick="submitExam('prod')">اعتماد الإجابات واستخراج الشهادة</button>
+            </div>
+        </div>
+
+        <div id="view-hvac" style="display: none;">
+            <div class="card">
+                <div class="card-header"><div class="card-num">١</div><h3 class="card-title">المقدمة الهندسية (التبريد وتكييف الهواء)</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">أنتم فريق استشاري مكلف بدراسة وتصميم منظومة تبريد وتكييف هواء لمجمع تعليمي لضمان كفاءة استهلاك الطاقة وتوزيع الهواء السليم.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٢</div><h3 class="card-title">المهمة الاستشارية المطلوبة</h3></div>
+                <p style="font-size: 13.5px; line-height: 1.6; margin: 0; color: #334155;">حساب الأحمال واختيار مائع التبريد المناسب بيئياً وفحص المخطط السيكرومتري لضبط الرطوبة ودرجة الحرارة.</p>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٣</div><h3 class="card-title">العمليات ومتابعة الإنجاز</h3></div>
+                <div class="progress-box">
+                    <div class="progress-txt" id="txt-hvac">أكملت 0% من المهام</div>
+                    <div class="progress-bg"><div class="progress-fill" id="bar-hvac"></div></div>
+                </div>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('hvac')"> <span>تحليل دورة التبريد الانضغاطية الميكانيكية</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('hvac')"> <span>مراجعة خواص الهواء على الخريطة السيكرومترية</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('hvac')"> <span>المفاضلة بين وسائط وموائع التبريد الحديثة</span></label>
+                <label class="chk-item"><input type="checkbox" onclick="calcProgress('hvac')"> <span>حل الأسئلة التخصصية الخمسة واعتماد النتيجة</span></label>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٤</div><h3 class="card-title">المصادر والمراجع المعتمدة (4 مصادر)</h3></div>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AF%D9%88%D8%B1%D8%A9_%D8%A7%D9%86%D8%B6%D8%BA%D8%A7%D8%B7_%D8%A7%D9%84%D8%A8%D8%AE%D8%A7%D8%B1" target="_blank" class="res-card">
+                    <span class="res-badge">مرجع هندسي</span>
+                    <div class="res-title">دورات التبريد الانضغاطية الميكانيكية</div>
+                    <p class="res-desc">تحليل عمل الضاغط، المكثف، صمام التمدد، والمبخر في المنظومات الحديثة.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%B3%D9%8A%D9%83%D8%B1%D9%88%D9%85%D8%AA%D8%B1%D9%8A%D8%A9" target="_blank" class="res-card">
+                    <span class="res-badge">بحث تطبيقي</span>
+                    <div class="res-title">المخطط السيكرومتري وخواص الهواء</div>
+                    <p class="res-desc">تحديد الرطوبة النسبية ودرجات حرارة الهواء لتصميم مجاري التوزيع.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D9%85%D8%A7%D8%A6%D8%B9_%D8%AA%D8%A8%D8%B1%D9%8A%D8%AF" target="_blank" class="res-card">
+                    <span class="res-badge">دليل بيئي</span>
+                    <div class="res-title">وسائط وموائع التبريد الحديثة</div>
+                    <p class="res-desc">الغازات الصديقة للبيئة ومعاملات الأمان في منظومات التكييف.</p>
+                </a>
+                <a href="https://ar.wikipedia.org/wiki/%D8%AA%D9%83%D9%8A%D9%8A%D9%81_%D8%A7%D9%84%D9%87%D9%88%D8%A7%D8%A1" target="_blank" class="res-card">
+                    <span class="res-badge">منظومات</span>
+                    <div class="res-title">أنظمة تكييف الهواء المركزية والشيلرات</div>
+                    <p class="res-desc">توزيع الهواء وتصميم الدكتات ووحدات مناولة الهواء.</p>
+                </a>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-num">٥</div><h3 class="card-title">التقويم (التبريد والتكييف - 100 درجة)</h3></div>
+                <div class="q-item">
+                    <div class="q-text">س1: الجزء المسؤول عن خفض ضغط مائع التبريد وتحويله لرذاذ بارد هو:</div>
+                    <label class="opt-row"><input type="radio" name="hq1" value="1"> صمام التمدد (Expansion Valve)</label>
+                    <label class="opt-row"><input type="radio" name="hq1" value="0"> الضاغط (Compressor)</label>
+                    <label class="opt-row"><input type="radio" name="hq1" value="0"> المكثف (Condenser)</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س2: على الخريطة السيكرومترية، خطوط درجة حرارة البصلة الجافة تكون:</div>
+                    <label class="opt-row"><input type="radio" name="hq2" value="1"> خطوط رأسية مستقيمة</label>
+                    <label class="opt-row"><input type="radio" name="hq2" value="0"> منحنيات مائلة</label>
+                    <label class="opt-row"><input type="radio" name="hq2" value="0"> خطوط أفقية تماماً</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س3: وظيفة المكثف (Condenser) في دورة التبريد هي:</div>
+                    <label class="opt-row"><input type="radio" name="hq3" value="1"> طرد الحرارة وتحويل البخار إلى سائل</label>
+                    <label class="opt-row"><input type="radio" name="hq3" value="0"> امتصاص الحرارة من الحيز المكيف</label>
+                    <label class="opt-row"><input type="radio" name="hq3" value="0"> خفض سرعة مائع التبريد</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س4: معامل الأداء (COP) في منظومات التبريد يعبر عن النسبة بين:</div>
+                    <label class="opt-row"><input type="radio" name="hq4" value="1"> سعة التبريد المستفادة إلى القدرة المستهلكة</label>
+                    <label class="opt-row"><input type="radio" name="hq4" value="0"> وزن الضاغط إلى حجم المبخر</label>
+                    <label class="opt-row"><input type="radio" name="hq4" value="0"> درجة حرارة الجو إلى سرعة المروحة</label>
+                </div>
+                <div class="q-item">
+                    <div class="q-text">س5: الخاصية التي تعبر عن كمية بخار الماء مقارنة بأقصى تشبع:</div>
+                    <label class="opt-row"><input type="radio" name="hq5" value="1"> الرطوبة النسبية (Relative Humidity)</label>
+                    <label class="opt-row"><input type="radio" name="hq5" value="0"> درجة حرارة الندى</label>
+                    <label class="opt-row"><input type="radio" name="hq5" value="0"> الضغط الجوي</label>
+                </div>
+                <button type="button" class="btn-submit" onclick="submitExam('hvac')">اعتماد الإجابات واستخراج الشهادة</button>
+            </div>
+        </div>
+
+        <div id="cert-container">
+            <h2 style="color: #064e3b; margin: 0 0 4px; font-size: 22px;">جامعة السويس</h2>
+            <h4 style="margin: 0 0 12px; color: #64748b; font-size: 14px;">كلية التكنولوجيا والتعليم</h4>
+            <div style="height: 2px; width: 60px; background: #047857; margin: 0 auto 12px;"></div>
+            <h3 style="color: #047857; margin-bottom: 6px;">إفادة إتمام الرحلة المعرفية الهندسية</h3>
+            <p style="font-size: 14px; margin: 6px 0; color: #475569;">يشهد القائمون على النشاط بأن الطالب / رئيس المجموعة:</p>
+            <h2 id="res-name" style="margin: 6px 0; color: #0f172a; font-size: 20px;">---</h2>
+            <p style="font-size: 13.5px; margin: 4px 0; color: #475569;">المقيد بـ: <strong id="res-dept" style="color: #0f172a;">---</strong></p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin: 14px auto; max-width: 280px;">
+                <span style="font-size: 12px; color: #64748b;">الدرجة المستحقة</span>
+                <div style="font-size: 28px; font-weight: bold; color: #047857; margin: 4px 0;" id="res-score">0 / 100</div>
+                <div style="font-size: 13.5px; font-weight: bold; color: #0f172a;" id="res-grade">التقدير: ---</div>
+            </div>
+            <p style="font-size: 12px; color: #64748b; margin: 6px 0;">التاريخ: <span id="res-date">---</span> &nbsp;•&nbsp; رقم التحقق: <strong id="res-code" style="font-family: monospace; color: #0f172a;">---</strong></p>
+            <div style="margin-top: 20px; display: flex; justify-content: space-around; font-size: 12.5px; color: #334155;">
+                <div><strong>منسق النشاط الطلابي</strong><br><br>.........................</div>
+                <div><strong>أستاذ المادة المشرف</strong><br><br>.........................</div>
+            </div>
+            <button class="btn-print" onclick="window.print()">طباعة الإفادة الرسمية (A4)</button>
+        </div>
+    </div>
+
+    <script>
+        var KEY = 'wq_suez_v1';
+        var READ = 600;
+        var EXAM = 120;
+        var activeDept = 'civil';
+        var isDone = false;
+        var timerRef = null;
+        var startTs = null;
+
+        function loadState() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+        function saveState(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+
+        function shuffle(a) {
+            for (var i = a.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+
+        function initApp() {
+            // للمعلم: افتح الصفحة بـ index.html#reset لمسح حالة الجهاز
+            if (location.hash === '#reset') {
+                try { localStorage.removeItem(KEY); } catch (e) {}
+                history.replaceState(null, '', location.pathname);
+            }
+            // ترتيب عشوائي للاختيارات
+            document.querySelectorAll('.q-item').forEach(function(q) {
+                var opts = Array.prototype.slice.call(q.querySelectorAll('.opt-row'));
+                shuffle(opts).forEach(function(o) { q.appendChild(o); });
+            });
+            // إخفاء الأسئلة خلف زر البدء
+            document.querySelectorAll('.card').forEach(function(c) {
+                if (c.querySelector('.q-item')) {
+                    c.classList.add('quiz-card');
+                    var s = document.createElement('div');
+                    s.className = 'card start-card';
+                    s.innerHTML = '<p>اكتب اسمك واختر قسمك ثم اضغط الزر. لديك <strong>10 دقائق للقراءة</strong>، ثم يُفتح الاختبار تلقائياً لمدة <strong>دقيقتين</strong> ولا يمكن إيقاف العد.</p>' +
+                                  '<button type="button" class="btn-submit" onclick="startExam()">ابدأ الرحلة (قراءة 10 دقائق)</button>';
+                    if (!document.querySelector('.start-card')) { var first = document.querySelector('.container').firstElementChild; first.parentNode.insertBefore(s, first.nextSibling); }
+                }
+            });
+            var st = loadState();
+            if (st.done) { showDone(st); return; }
+            if (st.start) startExam(true);
+        }
+
+        function startExam(resume) {
+            if (!resume) {
+                var n0 = document.getElementById('user-name').value.trim();
+                var s0 = document.getElementById('user-id').value.trim();
+                if (!n0 || !s0) { alert('اكتب اسمك ورقمك الجامعي أولاً ثم اضغط ابدأ.'); return; }
+            }
+            var st = loadState();
+            if (!resume) {
+                st = { start: Date.now(), dept: activeDept, name: document.getElementById('user-name').value.trim(), sid: document.getElementById('user-id').value.trim() };
+                saveState(st);
+            } else if (st.dept) {
+                activeDept = st.dept;
+                document.getElementById('user-name').value = st.name || '';
+                document.getElementById('user-id').value = st.sid || '';
+                document.getElementById('user-dept').value = st.dept;
+                switchDept(st.dept);
+            }
+            startTs = st.start;
+            document.body.classList.add('started');
+            document.getElementById('user-dept').disabled = true;
+            document.getElementById('user-name').disabled = true;
+            document.getElementById('user-id').disabled = true;
+            tick();
+            timerRef = setInterval(tick, 1000);
+        }
+
+        function tick() {
+            if (isDone) { clearInterval(timerRef); return; }
+            var box = document.getElementById('timer-val');
+            var el = Math.floor((Date.now() - startTs) / 1000);
+            var reading = el < READ;
+            var left = reading ? READ - el : READ + EXAM - el;
+            setPhase(reading);
+            if (left <= 0) {
+                clearInterval(timerRef);
+                box.innerText = '00:00';
+                alert('انتهى وقت الاختبار (دقيقتان)! تم تسليم الإجابات تلقائياً.');
+                submitExam(activeDept, true);
+                return;
+            }
+            var mm = Math.floor(left / 60), ss = left % 60;
+            box.innerText = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+            box.classList.toggle('low', left <= (reading ? 60 : 30));
+        }
+
+        function setPhase(reading) {
+            var lbl = document.getElementById('timer-label');
+            if (reading) { lbl.innerText = '📖 وقت القراءة المتبقي:'; return; }
+            lbl.innerText = '⏳ وقت الاختبار المتبقي:';
+            if (!document.body.classList.contains('exam')) {
+                document.body.classList.add('exam');
+                var q = document.querySelector('#view-' + activeDept + ' .quiz-card');
+                if (q) q.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function switchDept(val) {
+            activeDept = val;
+            document.getElementById('view-civil').style.display = (val === 'civil') ? 'block' : 'none';
+            document.getElementById('view-prod').style.display = (val === 'prod') ? 'block' : 'none';
+            document.getElementById('view-hvac').style.display = (val === 'hvac') ? 'block' : 'none';
+            document.getElementById('cert-container').style.display = 'none';
+        }
+
+        function calcProgress(d) {
+            var boxes = document.querySelectorAll('#view-' + d + ' input[type="checkbox"]');
+            var cnt = 0;
+            for (var i = 0; i < boxes.length; i++) { if (boxes[i].checked) cnt++; }
+            var pct = Math.round((cnt / boxes.length) * 100);
+            document.getElementById('bar-' + d).style.width = pct + '%';
+            document.getElementById('txt-' + d).innerText = (pct === 100) ? 'أكملت 100% — جاهز للاختبار!' : ('أكملت ' + pct + '% من المهام');
+        }
+
+        function gradeOf(score) {
+            if (score >= 90) return 'ممتاز مرتفع (A+)';
+            if (score >= 80) return 'جيد جداً (B+)';
+            if (score >= 65) return 'جيد (C)';
+            if (score >= 50) return 'مقبول (D)';
+            return 'يحتاج مراجعة وتطوير';
+        }
+
+        function makeCode(str) {
+            var h = 5381;
+            for (var i = 0; i < str.length; i++) { h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; }
+            return 'SUEZ-' + h.toString(36).toUpperCase().padStart(7, '0');
+        }
+
+        function submitExam(dept, auto) {
+            if (isDone || !document.body.classList.contains('started')) return;
+            var nameBox = document.getElementById('user-name');
+            var nameVal = nameBox.value.trim();
+            if (!nameVal) {
+                if (auto) {
+                    nameVal = 'طالب مستمع / فريق العمل';
+                } else {
+                    alert('يرجى كتابة اسم الطالب أو رئيس المجموعة أولاً!');
+                    nameBox.focus();
+                    return;
+                }
+            }
+
+            var prefix = (dept === 'civil') ? 'cq' : (dept === 'prod' ? 'pq' : 'hq');
+            var score = 0, answered = 0;
+            for (var i = 1; i <= 5; i++) {
+                var chosen = document.querySelector('input[name="' + prefix + i + '"]:checked');
+                if (chosen) {
+                    answered++;
+                    if (chosen.value === '1') score += 20;
+                }
+            }
+            if (!auto && answered < 5) {
+                alert('يرجى الإجابة على جميع الأسئلة الخمسة قبل استخراج النتيجة!');
+                return;
+            }
+
+            var sel = document.getElementById('user-dept');
+            if (!auto && !confirm('هل تريد اعتماد الإجابات وإنهاء الاختبار؟ لا يمكن التعديل بعد ذلك.')) return;
+            var now = new Date();
+            var rec = {
+                done: true, name: nameVal, sid: document.getElementById('user-id').value.trim(), dept: dept,
+                deptTitle: sel.options[sel.selectedIndex].text,
+                score: score, grade: gradeOf(score),
+                date: now.toLocaleDateString('ar-EG'),
+                code: makeCode(nameVal + '|' + document.getElementById('user-id').value.trim() + '|' + dept + '|' + score + '|' + now.toISOString().slice(0, 10))
+            };
+            saveState(rec);
+            showDone(rec);
+        }
+
+        function showDone(rec) {
+            isDone = true;
+            clearInterval(timerRef);
+            document.body.classList.add('started');
+            document.body.classList.add('exam');
+            activeDept = rec.dept;
+            var sel = document.getElementById('user-dept');
+            sel.value = rec.dept;
+            sel.disabled = true;
+            switchDept(rec.dept);
+            document.getElementById('user-name').value = rec.name;
+            document.getElementById('user-id').value = rec.sid || '';
+            document.getElementById('user-id').disabled = true;
+            document.getElementById('user-name').disabled = true;
+            document.querySelectorAll('input[type="radio"], .btn-submit').forEach(function(el) { el.disabled = true; });
+            document.getElementById('timer-val').innerText = 'تم التسليم';
+            document.getElementById('timer-val').classList.remove('low');
+
+            document.getElementById('res-name').innerText = rec.name;
+            document.getElementById('res-dept').innerText = rec.deptTitle + ' — الرقم الجامعي: ' + (rec.sid || '-');
+            document.getElementById('res-score').innerText = rec.score + ' / 100';
+            document.getElementById('res-grade').innerText = 'التقدير: ' + rec.grade;
+            document.getElementById('res-date').innerText = rec.date;
+            document.getElementById('res-code').innerText = rec.code;
+
+            var cert = document.getElementById('cert-container');
+            cert.style.display = 'block';
+            cert.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
